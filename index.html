@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مفاجأة خاصة لأغلى إنسانة في قلبي ❤️</title>
+  
+  <!-- Fonts from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;800;900&family=Playfair+Display:ital,wght@0,600;1,600&family=Reem+Kufi:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome for luxury romantic icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Canvas Confetti Library for explosive celebration -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Romantic Canvas Background for Particles, Hearts & Rose Petals -->
+  <canvas id="ambient-canvas"></canvas>
+
+  <!-- Background Glowing Light Orbs -->
+  <div class="ambient-glow orb-1"></div>
+  <div class="ambient-glow orb-2"></div>
+  <div class="ambient-glow orb-3"></div>
+
+  <!-- Background Romantic Audio Player -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="assets/romantic_music.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Music Floating Controller (Appears on unlock) -->
+  <div class="music-pill" id="music-pill" title="تشغيل / كتم الموسيقى">
+    <div class="music-disc" id="music-disc">
+      <i class="fa-solid fa-compact-disc"></i>
+    </div>
+    <div class="music-info">
+      <span class="music-title">لحن حبنا 🎵</span>
+      <span class="music-status" id="music-status">انقر للتشغيل</span>
+    </div>
+    <button class="music-toggle-btn" id="music-btn" aria-label="تحكم بالموسيقى">
+      <i class="fa-solid fa-play" id="music-icon"></i>
+    </button>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- 1. شاشة القفل الرومانسية (Lock Screen) -->
+  <!-- ================================================================= -->
+  <section class="screen lock-screen active" id="lock-screen">
+    <div class="lock-card glass-panel">
+      
+      <!-- Glowing Heart Icon -->
+      <div class="lock-icon-wrapper">
+        <div class="heart-pulse-halo"></div>
+        <div class="heart-icon-box">
+          <svg class="heart-lock-svg" viewBox="0 0 24 24" width="46" height="46" fill="none">
+            <!-- Heart shape -->
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="url(#heart-grad)" stroke="#ffffff" stroke-width="1.5" />
+            <!-- Keyhole -->
+            <circle cx="12" cy="11.5" r="2.2" fill="#ffffff" />
+            <path d="M12 13.5v2.8" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
+            <defs>
+              <linearGradient id="heart-grad" x1="2" y1="3" x2="22" y2="21.35" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#fb7185"/>
+                <stop offset="1" stop-color="#be123c"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Heading -->
+      <div class="lock-header">
+        <span class="sparkle-badge">✨ مفاجأة سرية خاصة جداً ✨</span>
+        <h1 class="lock-title">مرحباً يا نبض قلبي</h1>
+        <p class="lock-subtitle">هذا المكان صُمم بكل ذرة حب خصيصاً لأميرتي الغالية.. ادخلي كلمة السر لفتح قلبي ورؤية المفاجأة 💖</p>
+      </div>
+
+      <!-- Password Form -->
+      <form class="password-form" id="password-form" onsubmit="event.preventDefault(); handleUnlock();">
+        <div class="input-container">
+          <i class="fa-solid fa-key input-prefix-icon"></i>
+          <input 
+            type="password" 
+            id="password-input" 
+            placeholder="اكتبي كلمة السر هنا..." 
+            autocomplete="off"
+            autofocus
+            required
+          />
+          <button type="button" class="toggle-password-btn" id="toggle-pwd-btn" title="إظهار / إخفاء كلمة السر">
+            <i class="fa-regular fa-eye" id="eye-icon"></i>
+          </button>
+        </div>
+
+        <!-- Heart Progress Dots (Fills as she types) -->
+        <div class="heart-dots-row" id="heart-dots">
+          <span class="dot-heart">❤️</span>
+          <span class="dot-heart">❤️</span>
+          <span class="dot-heart">❤️</span>
+          <span class="dot-heart">❤️</span>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="unlock-btn" id="unlock-btn">
+          <span>افتحي قلبي</span>
+          <i class="fa-solid fa-arrow-left"></i>
+          <div class="btn-glow-effect"></div>
+        </button>
+      </form>
+
+      <!-- Hint Section -->
+      <div class="lock-footer">
+        <button type="button" class="hint-toggle-btn" id="hint-btn">
+          <i class="fa-regular fa-lightbulb"></i> محتاجة تلميح؟
+        </button>
+        <p class="hint-text hidden" id="hint-text"></p>
+        <div class="error-toast hidden" id="error-toast"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <!-- 2. الشاشة الرئيسية والمفاجأة الكبرى (Main Experience Revealed) -->
+  <!-- ================================================================= -->
+  <main class="screen main-screen hidden" id="main-screen">
+    
+    <!-- Top Floating Sparkles & Badges -->
+    <header class="main-header">
+      <div class="crown-badge">
+        <i class="fa-solid fa-crown"></i>
+        <span>أنتِ ملكة قلبي وحياتي</span>
+        <i class="fa-solid fa-crown"></i>
+      </div>
+      <h1 class="fiancee-name" id="display-her-name">أميرتي الغالية</h1>
+      <p class="love-quote" id="display-love-quote">
+        "يا من جعلتِ كل ثانية في عمري ربيعاً مزهراً بحبكِ وحنانكِ"
+      </p>
+      <div class="romantic-divider">
+        <span class="line"></span>
+        <i class="fa-solid fa-heart divider-heart"></i>
+        <span class="line"></span>
+      </div>
+    </header>
+
+    <div class="main-content-container">
+
+      <!-- ============================================================= -->
+      <!-- بطاقة عرض الفيديو الملكية (Hero Video Card) -->
+      <!-- ============================================================= -->
+      <section class="video-showcase-section">
+        <div class="video-card glass-panel">
+          
+          <div class="card-top-bar">
+            <div class="bar-tag">
+              <span class="pulse-dot"></span>
+              <span>لحظاتنا الأغلى في الوجود ✨</span>
+            </div>
+            <div class="video-dedication">
+              إهداء من حبيبك <strong id="display-his-name">مصطفى</strong> 💍
+            </div>
+          </div>
+
+          <!-- Video Wrapper with Animated Glowing Frame -->
+          <div class="video-frame-outer">
+            <div class="video-glow-backdrop" id="video-glow-backdrop"></div>
+            <div class="video-container" id="video-container">
+              
+              <video 
+                id="main-video" 
+                controls 
+                playsinline 
+                loop
+                preload="auto"
+              >
+                <source src="assets/video.mp4" type="video/mp4">
+                متصفحك لا يدعم تشغيل الفيديو.
+              </video>
+
+              <!-- Big Glowing Play Overlay -->
+              <div class="video-play-overlay" id="video-play-overlay" onclick="playHeroVideo()">
+                <div class="play-pulse-ring"></div>
+                <div class="play-btn-circle">
+                  <i class="fa-solid fa-play"></i>
+                </div>
+                <span class="play-btn-label">انقري هنا لبدء مشاهدة الفيديو 💖</span>
+              </div>
+
+              <!-- Video Notice Overlay (if video file is missing) -->
+              <div class="video-placeholder hidden" id="video-placeholder">
+                <div class="placeholder-icon"><i class="fa-solid fa-film"></i></div>
+                <h3>هنا سيظهر فيديو خطيبتك الغالية</h3>
+                <p>ضع ملف الفيديو الخاص بها باسم <code>video.mp4</code> داخل مجلد <code>assets</code> أو اضغط الزر بالأسفل لاختياره مباشرة!</p>
+                <label class="custom-video-upload-btn">
+                  <i class="fa-solid fa-cloud-arrow-up"></i> اختار الفيديو من جهازك الآن
+                  <input type="file" id="local-video-input" accept="video/*" style="display:none;" onchange="handleLocalVideoUpload(event)">
+                </label>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Video Interactive Footer & Reactions -->
+          <div class="video-actions-bar">
+            <div class="reaction-prompt">
+              <i class="fa-solid fa-sparkles"></i>
+              <span>قولي لي رأيك في المفاجأة:</span>
+            </div>
+
+            <div class="reaction-buttons-group">
+              <button class="love-reaction-btn main-heart-btn" id="love-reaction-btn" title="أرسلي قلوباً لحبيبك">
+                <i class="fa-solid fa-heart"></i>
+                <span class="reaction-text">بحبك أوي ❤️</span>
+                <span class="reaction-counter" id="love-counter">0</span>
+              </button>
+
+              <button class="love-reaction-btn" onclick="sendHeartBurst('🥰')">
+                <span>🥰 فرحتني</span>
+              </button>
+
+              <button class="love-reaction-btn" onclick="sendHeartBurst('💍')">
+                <span>💍 ربنا يخليك ليا</span>
+              </button>
+
+              <label class="love-reaction-btn change-video-label-btn" title="تغيير أو رفع الفيديو الكامل">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <span>رفع الفيديو الكامل 🎬</span>
+                <input type="file" accept="video/*" style="display:none;" onchange="handleLocalVideoUpload(event)">
+              </label>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- قسم رسالة الحب والجواب السري (Love Letter / Royal Envelope) -->
+      <!-- ============================================================= -->
+      <section class="love-letter-section">
+        <div class="section-badge">
+          <i class="fa-solid fa-envelope-open-text"></i> رسالة خاصة من القلب
+        </div>
+
+        <div class="envelope-wrapper" id="envelope-wrapper">
+          <div class="envelope" id="envelope" onclick="toggleLetter()">
+            <div class="envelope-flap" id="envelope-flap"></div>
+            <div class="envelope-pocket"></div>
+            <div class="envelope-seal" id="envelope-seal">
+              <i class="fa-solid fa-heart"></i>
+              <span>افتحي الجواب</span>
+            </div>
+          </div>
+
+          <!-- Unfolded Letter Paper -->
+          <div class="letter-paper glass-panel hidden" id="letter-paper">
+            <div class="letter-header">
+              <i class="fa-solid fa-feather-pointed quill-icon"></i>
+              <h2 id="letter-title">إلى نبض قلبي وشريكة عمري.. ✨</h2>
+            </div>
+            <div class="letter-body">
+              <p id="letter-content" class="typed-text"></p>
+            </div>
+            <div class="letter-footer">
+              <div class="signature">
+                <span>حبيبك المخلص دائماً،</span>
+                <strong id="letter-signature">مصطفى ❤️</strong>
+              </div>
+              <button class="close-letter-btn" onclick="toggleLetter()" title="إغلاق الجواب">
+                <i class="fa-solid fa-check"></i> حفظ في قلبي
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================= -->
+      <!-- عداد الحب وتفاصيل رحلتنا (Love Timeline Counter) -->
+      <!-- ============================================================= -->
+      <section class="love-counter-section">
+        <div class="counter-card glass-panel">
+          <div class="counter-header">
+            <i class="fa-solid fa-ring counter-icon"></i>
+            <h2>الوقت الحقيقي لبداية عمري الجديد لما تكوني بتاعتي قدام الناس كلها يا ست البنات 💍✨</h2>
+            <p>كل لحظة وثانية بتعدي وإحنا سوا هي أجمل هدية في عمري، ومستني اليوم اللي يجمعنا في بيت واحد</p>
+          </div>
+
+          <div class="timer-grid" id="timer-grid">
+            <div class="timer-box">
+              <span class="timer-value" id="days-count">0</span>
+              <span class="timer-label">يوم حب</span>
+            </div>
+            <div class="timer-box">
+              <span class="timer-value" id="hours-count">0</span>
+              <span class="timer-label">ساعة</span>
+            </div>
+            <div class="timer-box">
+              <span class="timer-value" id="minutes-count">0</span>
+              <span class="timer-label">دقيقة</span>
+            </div>
+            <div class="timer-box">
+              <span class="timer-value" id="seconds-count">0</span>
+              <span class="timer-label">ثانية</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Romantic Floating Words Cloud -->
+    <div class="floating-words-container" id="floating-words-container"></div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+      <p>صُنع بكل ذرة حب وشغف من أجل أميرتي الغالية 💖 | وعد بالحب الأبدي</p>
+    </footer>
+
+  </main>
+
+  <!-- Load Config & Core Logic Scripts -->
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
